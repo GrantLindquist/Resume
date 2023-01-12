@@ -1,4 +1,5 @@
 # A snippet collection of various projects that I have developed.
+*As per GCU plaigarism policy, I am unable to include all of the source code for a majority these projects.*
 
 ### Hexbar Fitness
 
