@@ -27,6 +27,7 @@ Hexbar Fitness is a full-stack web application using React with Express as a bac
 # Code Snippets
 
 ### Overhead App React Component
+*note: Since this app does not support user authentication, ?userId=3 represents a default user object that is used for debugging the app. If I were to further develop this app, ?userId=3 would be replaced with the user id of the logged-in user.*
 
 ```
 const App = () => {
@@ -169,6 +170,7 @@ export default ExerciseForm;
 ```
 
 ### User object Express controller
+*note: Since this app does not support user authentication, ?userId=3 represents a default user object that is used for debugging the app. If I were to further develop this app, ?userId=3 would be replaced with the user id of the logged-in user.*
 
 ```
 // Inserts exercises into user
