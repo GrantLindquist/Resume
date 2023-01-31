@@ -28,8 +28,9 @@ Hexbar Fitness is a full-stack web application using React with Express as a bac
 
 ### Overhead App React Component
 
-`const App = () => {
-    
+```
+const App = () => {
+
     const [user, setUser] = useState([]);
     // Convert date to string whenever interacting with database
     const [date, setDate] = useState(new Date(Date.now()));
@@ -69,11 +70,13 @@ Hexbar Fitness is a full-stack web application using React with Express as a bac
     return <>{homePage}</>
 };
 
-export default App;`
+export default App;
+```
 
 ### React Form that creates a new Exercise object
 
-`const ExerciseForm = (param) => {
+```
+const ExerciseForm = (param) => {
   
   // Blank exercise object to place in form
   var exercise = {
@@ -163,11 +166,12 @@ export default App;`
   );
 };
 export default ExerciseForm;
-`
+```
 
 ### User object Express controller
 
-`// Inserts exercises into user
+```
+// Inserts exercises into user
 async function getExercises(users: User[], res: Response<any, Record<string, any>>) {
   for (let i = 0; i < users.length; i ++) {
     try {
@@ -400,11 +404,13 @@ export const deleteUser: RequestHandler = async (req: Request , res: Response) =
        message : 'There was an error when deleting the user'
       });
     }
-  };`
+  };
+```
 
 ### DDL Scripts
 
-`DROP DATABASE IF EXISTS hexbar;
+```
+DROP DATABASE IF EXISTS hexbar;
 CREATE DATABASE  IF NOT EXISTS `hexbar` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `hexbar`;
 -- MySQL dump 10.13  Distrib 5.7.26, for osx10.10 (x86_64)
@@ -485,4 +491,4 @@ CREATE TABLE `exercise` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed
-`
+```
