@@ -14,19 +14,16 @@ Hexbar Fitness is a full-stack web application using React with Express as a bac
 
 ### FireStarter
 
-here is some text 
-[here is a link to a directory](https://www.github.com)
+*stuff will go here later!*
 
 ---
 
 ### Monkey Business
  
-here is some text 
-[here is a link to a directory](https://www.github.com)
+*stuff will go here later!*
 
 ---
 
 ### Minesweeper
 
-here is some text 
-[here is a link to a directory](https://www.github.com)
+*stuff will go here later!*
