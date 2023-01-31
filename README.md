@@ -8,7 +8,7 @@ Hexbar Fitness is a full-stack web application using React with Express as a bac
 ![hexbarfitness-homepage](https://user-images.githubusercontent.com/78822631/215652745-f0779e24-0491-4be0-b6f2-a5e77819657f.jpg)
 
 
-[HexbarFitness directory](https://www.github.com)
+[HexbarFitness directory](https://github.com/GrantLindquist/Resume/tree/main/HexbarFitness)
 
 ---
 
