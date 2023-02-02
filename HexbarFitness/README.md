@@ -177,10 +177,6 @@ const ExerciseForm = (param) => {
 export default ExerciseForm;
 ```
 
-### REST API endpoints
-
-
-
 ### DDL Scripts
 
 ```
