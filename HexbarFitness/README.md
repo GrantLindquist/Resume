@@ -25,35 +25,37 @@ Hexbar Fitness is a full-stack web application using React with Express as a bac
 ---
 
 # Code Snippets
+*note: Since this app does not support user authentication, ?userId=3 represents a default user object that is used for debugging the app. If I were to further develop this app, ?userId=3 would be replaced with the user id of the logged-in user.*
 
 ### Overhead App React Component
-*note: Since this app does not support user authentication, ?userId=3 represents a default user object that is used for debugging the app. If I were to further develop this app, ?userId=3 would be replaced with the user id of the logged-in user.*
+The root React Component for this project. Demonstrates React Hooks and utilizing React States that reload the component if necessary.
 
 ```
 const App = () => {
 
+    // User State - represents user that is signed into application.
     const [user, setUser] = useState([]);
-    // Convert date to string whenever interacting with database
+    // Date State - reresents the date that user is viewing exercises from. By default, it is set to the current date.
     const [date, setDate] = useState(new Date(Date.now()));
 
-    // Fetches current user JSON
+    // Fetches JSON data from signed-in user.
     const loadUser = async() =>{
         const response = await userData.get('?userId=3');
         setUser(response.data);
     }
 
-    // Loads users upon component render
+    // Loads users upon component render.
     useEffect(() => {
         loadUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Handles click event on calendar cell - takes string parameter
+    // Handles click event on calendar cell - accepts string parameter that represents new date.
     const handleClick = (date) => {
         setDate(new Date(date));
     }
 
-    // Applies user to home page
+    // Maps User State data to home page.
     var homePage = user.map((user) => {
         return(<>       
             <BrowserRouter>
@@ -75,11 +77,12 @@ export default App;
 ```
 
 ### React Form that creates a new Exercise object
+This React form takes user input, creates an Exercise object using the input, and submits an API request to place the Exercise inside of the database. The component reloads upon submitting to seamlessly add the Exercise into the user interface.
 
 ```
 const ExerciseForm = (param) => {
   
-  // Blank exercise object to place in form
+  // Blank exercise object that form will fill-out.
   var exercise = {
     userId: 3,
     name: '',
@@ -87,6 +90,7 @@ const ExerciseForm = (param) => {
     sets: '',
     reps: '',
   };
+  // If user is updating an Exercise rather than creating one, the information from the Exercise being updated is automatically used.
   if(!param.isCreatingNewExercise){
     exercise = {
       userId: 3,
@@ -103,6 +107,7 @@ const ExerciseForm = (param) => {
   const [exerciseSets, setExerciseSets] = useState(0);
   const [exerciseReps, setExerciseReps] = useState(0);
 
+  // State-changing methods
   const updateExerciseName = (event) => {
     setExerciseName(event.target.value);
   };
@@ -130,9 +135,12 @@ const ExerciseForm = (param) => {
   // Places exercise into API
   const submitExercise = async (exercise) => {
     let response;
+    // Calls POST request if user is creating a new Exercise
     if (param.isCreatingNewExercise) {
       response = await exerciseData.post("?userId=3", exercise);
-    } else {
+    } 
+    // Calls PUT request if user is updating a previous exercise
+    else {
       response = await exerciseData.put(`?userId=3&exerciseId=${exercise.exerciseId}`, exercise);
     }
     console.log(response);
@@ -169,245 +177,9 @@ const ExerciseForm = (param) => {
 export default ExerciseForm;
 ```
 
-### User object Express controller
-*note: Since this app does not support user authentication, ?userId=3 represents a default user object that is used for debugging the app. If I were to further develop this app, ?userId=3 would be replaced with the user id of the logged-in user.*
+### REST API endpoints
 
-```
-// Inserts exercises into user
-async function getExercises(users: User[], res: Response<any, Record<string, any>>) {
-  for (let i = 0; i < users.length; i ++) {
-    try {
-      let exercises = await ExerciseDAO.getExercises(users[i].userId);
-      users[i].exercises = exercises;
 
-    } catch (error) {
-      console.error ('[user.controller] [getExercises] [Error]', error );
-      res.status(500).json({
-       message: 'There was an error when fetching exercises'
-      });
-    }
-  }
-};
-
-// Creates user and places into DB
-export const getExercisesByDate: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    let userId = parseInt(req.query.userId as string);
-    let date = req.query.date as string;
-
-    // Create user in DB
-    const exercises = await ExerciseDAO.getExercisesByDate(userId, date);
-    
-    // Returns OK
-    res.status(200).json(exercises);
-  } 
-  // If error
-  catch (error) {
-    // Log error 
-    console.error("[user.controller] [getExercisesByDate] [Error]", error);
-    // Send 500 error
-    res.status(500).json({message: " There was an error when getting an exercises"});
-  }
-};
-
-// Creates user and places into DB
-export const createExercise: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    // Create user in DB
-    const exercise = await ExerciseDAO.createExercise(req.body);  
-
-    // Returns OK
-    res.status(200).json(exercise);
-  } 
-  // If error
-  catch (error) {
-    // Log error 
-    console.error("[user.controller] [createExercise] [Error]", error);
-    // Send 500 error
-    res.status(500).json({message: " There was an error when creating an exercise"});
-  }
-};
-
-// Updates exercise info in DB
-export const updateExercise: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    // Executes update query
-    let exerciseId = parseInt (req.query.exerciseId as string ) ;
-    const exercise = await ExerciseDAO.updateExercise(req.body, exerciseId);
-    res.status(200).json(exercise);
-  } 
-  catch (error) 
-  {
-    console.error("[user.controller] [updateExercise] [Error]", error);
-    res.status(500).json({
-      message: "An error occurred while updating exercise",
-    });
-  }
-};
-
-// Deletes exercise from DB
-export const deleteExercise: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    // Executes update query
-    let exerciseId = parseInt (req.query.exerciseId as string ) ;
-    const response = await ExerciseDAO.deleteExercise(exerciseId);
-    res.status(200).json(response);
-  } 
-  catch (error) 
-  {
-    console.error("[user.controller] [deleteExercise] [Error]", error);
-    res.status(500).json({
-      message: "An error occurred while deleting exercise",
-    });
-  }
-};
-
-// Gets users from DB
-export const getUsers: RequestHandler = async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      let user;
-      let userId = parseInt(req.query.userId as string);
-
-      // If there is no user id requested
-      if (Number.isNaN(userId)) {
-        // Return every user from DB
-        user = await UserDAO.getUsers();
-      } 
-      // If user id is specified
-      else {
-        // Return user of specified id
-        user = await UserDAO.getUserByUserId(userId);
-      }
-      // Fill user with exercise objects
-      await getExercises(user, res);
-  
-      // Return OK status with user JSON
-      res.status(200).json(user);
-    } 
-    // If any error occurs
-    catch (error) {
-      // Log error
-      console.error("[user.controller] [getUsers] [Error]", error);
-      // Send 500 server error
-      res.status(500).json({
-        message: "Error occurred while fetching users",
-      });
-    }
-  };
-
-// Gets user by username using LIKE query
-export const getUsersByUsernameSearch: RequestHandler = async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      // Executes search query using username parameter
-      const user = await UserDAO.getUsersByUsernameSearch(
-        "%" + req.params.search + "%"
-      );
-
-      // Fill user with exercise objects
-      await getExercises(user, res);
-
-      // Return OK status with user JSON
-      res.status(200).json(user);
-    }
-    // If error occurs 
-    catch (error) {
-      // Log error
-      console.error("[user.controller] [getUsers] [Error]", error);
-      // Send 500 server error
-      res.status(500).json({
-        message: "Error occurred while fetching users",
-      });
-    }
-  };
-
-// Creates user and places into DB
-export const createUser: RequestHandler = async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      // Create user in DB
-      const okPacket: OkPacket = await UserDAO.createUser(req.body);  
-      // Creates exercise objects for user
-      req.body.exercises.forEach(async (exercise: Exercise) => {
-        try {
-          // Executes create query
-          await ExerciseDAO.createExercise(exercise);
-        } 
-        // If error
-        catch (error) {
-          // Log error
-          console.error("[user.controller] [createExercises] [Error]", error);
-          // Send 500 error
-          res.status(500).json({message: "An error occurred while creating exercises"});
-        }
-      });
-      // Returns OK
-      res.status(200).json(okPacket);
-    } 
-    // If error
-    catch (error) {
-      // Log error 
-      console.error("[user.controller] [createUser] [Error]", error);
-      // Send 500 error
-      res.status(500).json({message: " There was an error when creating users"});
-    }
-  };
-  
-// Updates user info in DB
-export const updateUser: RequestHandler = async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      // Executes update query
-      const okPacket: OkPacket = await UserDAO.updateUser(req.body);
-      res.status(200).json(okPacket);
-    } 
-    catch (error) 
-    {
-      console.error("[user.controller] [updateUser] [Error]", error);
-      res.status(500).json({
-        message: "An error occurred while updating user",
-      });
-    }
-  };
-  
-// Deletes user from DB
-export const deleteUser: RequestHandler = async (req: Request , res: Response) => {
-    try {
-      let userId = parseInt (req.params.userId as string ) ;
-      // Deletes exercises in user
-      await ExerciseDAO.deleteExercisesByUserId(userId);
-      const response = await UserDAO.deleteUser(userId) ;
-      res.status(200).json(response);
-    } 
-    catch ( error ) {
-      console.error('[albums.controller] [deleteUser] [Error]', error);
-      res.status(500).json({
-       message : 'There was an error when deleting the user'
-      });
-    }
-  };
-```
 
 ### DDL Scripts
 
