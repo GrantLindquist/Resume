@@ -23,4 +23,29 @@ This is full-stack web application using .NET MVC connected to a SQL database th
 
 ### AJAX
 
+```
+// Updates a minesweeper cell's display on click
+function doButtonUpdate(buttonRow, buttonCol, urlString) {
+    // Send POST request to urlString parameter and send buttonRow + buttonCol as request parameters
+    $.ajax({
+        datatype: "json",
+        method: 'POST',
+        url: urlString,
+        data: {
+            "buttonRow": buttonRow,
+            "buttonCol": buttonCol
+        },
+        // If request returns 200, update display
+        success: function (data) {
+            console.log(data);
+            $("[value='" + buttonRow + "," + buttonCol + "']").replaceWith($(data));
+        }
+    });
+};
+```
+
 ### .NET Page Security
+
+```
+
+```
