@@ -18,6 +18,65 @@ MonkeyBusiness is full-stack web application using Spring Boot and Thymeleaf con
 
 # Code Snippets
 
+### MVC & N-Layer architecture
+This code displays the N-layer architecture of this project. You can see the Product objects being extracted from the database within the Data layer, and then being passed through the Business layer in order for the Controller to display the objects in the Presentation layer.
+
+*ProductsDataService.java*
+```
+public List<ProductModel> findAll()
+{
+	String sql = "SELECT * FROM monkeybusiness.product";
+	List<ProductModel> products = new ArrayList<ProductModel>();
+	try 
+	{
+		// Executes SQL query
+		SqlRowSet srs = jdbcTemplateObject.queryForRowSet(sql);
+		// Loops through results of query
+		while(srs.next()) 
+		{
+			products.add(new ProductModel(srs.getString("name"), 
+								srs.getString("description"),
+								srs.getString("size"),
+								srs.getDouble("price"),
+								srs.getInt("productId")));
+		}
+	}
+	catch(Exception e) 
+	{
+		e.printStackTrace();
+	}
+	
+	return products;
+}
+```
+*ProductsBusinessService.java*
+```
+/**
+* Returns all products from database
+* @return list of products
+*/
+public List<ProductModel> getProducts()
+{
+	return service.findAll();
+}
+```
+*MenuController.java*
+```
+/**
+* Displays main menu.
+* @param model
+* @return login html file
+*/
+@GetMapping("/")
+public String display(Model model) 
+{
+	// If user is logged in, display products
+	model.addAttribute("products", productBusinessService.getProducts());
+	
+	return "index";
+}
+```
+
 ### Spring Security configuration
 This piece of code activates Spring Security for my project. Additionally, specifies which pages can be accessed by an unauthorized user. Every other page requires the user to sign into an account before accessing. This code also preforms basic encryption/decryption on the user's password before it is entered or extratced from the database.
 ```
