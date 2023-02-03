@@ -19,6 +19,6 @@
 
 ---
 
-### Minesweeper
+### MinesweeperWeb
 
-*stuff will go here later!*
+[MinesweeperWeb](https://github.com/GrantLindquist/Resume/tree/main/MinesweeperWeb) is full-stack web application using .NET MVC connected to a SQL database through Visual Studio. “MinesweeperWeb” is exactly as it sounds, the classic Minesweeper game hosted on a web server.
